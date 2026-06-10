@@ -1,0 +1,9 @@
+{
+  "name": "buycall-report",
+  "description": "한국 주식 매수콜(매매전략) 보고서를 buy-side 관점으로 생성. sell-side 원페이저 + 상세 분석 Word 보고서.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mun4046",
+    "email": "ansgywhd@gmail.com"
+  }
+}
