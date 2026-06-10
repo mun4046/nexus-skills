@@ -1,9 +1,0 @@
-{
-  "name": "ipo-workflow",
-  "description": "IPO 수요예측 점검 리스트 및 배정·청약 결재서류(엑셀 시트) 자동 생성.",
-  "version": "1.0.0",
-  "author": {
-    "name": "mun4046",
-    "email": "ansgywhd@gmail.com"
-  }
-}
