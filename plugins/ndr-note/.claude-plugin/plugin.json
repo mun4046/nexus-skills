@@ -1,0 +1,9 @@
+{
+  "name": "ndr-note",
+  "description": "기업 탐방(NDR/IR) 노트를 Nexus Asset Management 양식(골드/브라운, 4파트)의 Word/PDF 보고서로 자동 작성. 데이터는 NotebookLM 종목 노트북에서 수집. 매매콜이 아닌 탐방 정리 노트.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mun4046",
+    "email": "ansgywhd@gmail.com"
+  }
+}

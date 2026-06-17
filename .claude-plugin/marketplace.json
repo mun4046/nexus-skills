@@ -4,12 +4,21 @@
     "name": "mun4046",
     "email": "ansgywhd@gmail.com"
   },
-  "description": "운용 업무 자동화 스킬 모음 — 매수콜 보고서",
+  "description": "운용 업무 자동화 스킬 모음 — 매수콜 보고서, 기업탐방 노트",
   "plugins": [
     {
       "name": "buycall-report",
       "source": "./plugins/buycall-report",
       "description": "한국 주식 매수콜(매매전략) 보고서를 buy-side 관점으로 생성. sell-side 원페이저 + 상세 분석 Word 보고서.",
+      "version": "1.0.0",
+      "author": {
+        "name": "mun4046"
+      }
+    },
+    {
+      "name": "ndr-note",
+      "source": "./plugins/ndr-note",
+      "description": "기업 탐방(NDR/IR) 노트를 Nexus Asset Management 양식의 Word/PDF 보고서로 자동 작성. NotebookLM 종목 노트북에서 데이터 수집.",
       "version": "1.0.0",
       "author": {
         "name": "mun4046"
