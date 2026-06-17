@@ -188,23 +188,21 @@ def build(cfg):
     p=para(space_after=6,container=R); r=p.add_run(cov["headline"]); setf(r,size=13,bold=True,color=BLACK)
 
     # ▌핵심 요약
-    p=para(space_after=2,space_before=4,container=R); r=p.add_run("▌ 핵심 요약"); setf(r,size=10,bold=True,color=GOLD)
-    rich_md(para(space_after=4,container=R,line=1.2),cov["summary"],size=9,color=BODY)
+    p=para(space_after=1,space_before=2,container=R); r=p.add_run("▌ 핵심 요약"); setf(r,size=10,bold=True,color=GOLD)
+    rich_md(para(space_after=3,container=R,line=1.15),cov["summary"],size=8.5,color=BODY)
 
     # ▌탐방 포인트
-    p=para(space_after=2,space_before=2,container=R); r=p.add_run("▌ 탐방 포인트"); setf(r,size=10,bold=True,color=GOLD)
+    p=para(space_after=1,space_before=1,container=R); r=p.add_run("▌ 탐방 포인트"); setf(r,size=10,bold=True,color=GOLD)
     marks="①②③④⑤"
     for i,(h,t) in enumerate(cov["points"]):
-        pp=para(space_after=2,container=R,indent=0.1)
-        r=pp.add_run(marks[i]+" "); setf(r,size=9,bold=True,color=GOLD_A)
-        r=pp.add_run(h+" — "); setf(r,size=9,bold=True,color=GOLD)
-        r=pp.add_run(t); setf(r,size=9,color=BODY)
-
-    DOC.add_paragraph().paragraph_format.space_after=Pt(2)
+        pp=para(space_after=1,container=R,indent=0.1,line=1.1)
+        r=pp.add_run(marks[i]+" "); setf(r,size=8.5,bold=True,color=GOLD_A)
+        r=pp.add_run(h+" — "); setf(r,size=8.5,bold=True,color=GOLD)
+        r=pp.add_run(t); setf(r,size=8.5,color=BODY)
 
     # Forecasts & Valuations
     fc=cfg["forecasts"]
-    pfv=para(space_after=3,space_before=2); r=pfv.add_run("Forecasts & Valuations  "); setf(r,size=11,bold=True,color=GOLD)
+    pfv=para(space_after=2,space_before=4); r=pfv.add_run("Forecasts & Valuations  "); setf(r,size=11,bold=True,color=GOLD)
     r=pfv.add_run(fc.get("unit","(단위: 억원, 원, %, 배 / E는 자체 추정)")); setf(r,size=8,color=GREY)
     yrs=fc["years"]; rows=fc["rows"]
     fv=DOC.add_table(rows=len(rows)+1,cols=len(yrs)+1); thin_borders(fv)
