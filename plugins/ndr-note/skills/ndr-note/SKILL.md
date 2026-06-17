@@ -11,17 +11,16 @@ description: >
 # 기업탐방(NDR)노트 작성 스킬
 
 ## 개요
-NDR/IR 탐방 내용을 **Nexus Asset Management 양식(골드/브라운, 4파트)**의 Word 보고서로 작성하고 PDF로 변환한다.
+NDR/IR 탐방 내용을 **Nexus Asset Management 양식(골드/브라운, 3파트)**의 Word 보고서로 작성하고 PDF로 변환한다.
 데이터 소스는 **NotebookLM 종목 노트북**(NDR 녹취록 + 공시). 콘텐츠를 `config.json`으로 구성한 뒤
 `scripts/build_ndr_note.py`로 docx를 생성하고, `scripts/convert_to_pdf.py`로 PDF를 만든다.
 
-이 스킬은 **포터블**이다 — 폴더를 다른 PC의 `~/.claude/skills/ndr-note/`에 복사하면 그대로 동작한다(설치/이식은 `README.md` 참고). 절대경로 가정 없음: 출력물은 사용자 바탕화면에 저장된다.
+이 스킬은 **포터블**이다 — 폴더를 다른 PC의 `~/.claude/skills/ndr-note/`에 복사하면 그대로 동작한다(설치/이식은 `README.md` 참고). 절대경로 가정 없음: 출력물은 **사용자 바탕화면에 `<종목명>_탐방노트.docx`/`.pdf`로 통일 저장**된다.
 
-**산출 구성(4파트):**
-1. **표지(1p)** — 헤더밴드(`Nexus 로고 | 기업탐방 Note | 날짜`) + 좌측 데이터컬럼(Stock Data·상대수익률·주가추이·Reported by) + 우측 논지블록(종목명·섹터·헤드라인·▌탐방 개요·▌핵심 요약·▌탐방 포인트 ①②③) + 하단 Forecasts & Valuations 표
+**산출 구성(3파트):**
+1. **표지(1p)** — 헤더밴드(`Nexus 로고 | 기업탐방 Note | 날짜`) + 좌측 데이터컬럼(Stock Data·상대수익률·주가추이·Reported by) + 우측 논지블록(종목명·섹터·헤드라인·▌핵심 요약·▌탐방 포인트 ①②③) + 하단 Forecasts & Valuations 표(1페이지 내 통합)
 2. **심층 분석(2~3p)** — 큰 중앙 제목 + ▌소제목 섹션(`**...**`로 핵심문구 볼드+밑줄) + 로드맵/제품 표
 3. **Q&A** — "Q&A" 골드 탭. NDR 녹취록에서 **실제 문답을 추출해 수치 중심으로 구체적으로**(보통 12~16개)
-4. **Compliance Notice** — 골드 배경 전체면, 면책 항목
 
 디자인 근거 양식은 `reference/` 폴더에 동봉(`(템플릿)매매전략 보고서.docx` = 1페이지 디자인·색, `선익시스템 탐방 보고서.pdf` = 내용 구성). 생성 자체는 이 파일들이 없어도 동작(디자인은 제너레이터에 내장).
 
@@ -55,14 +54,13 @@ mcp__notebooklm__notebook_get        # 소스 목록 확인 (NDR docx / 공시 P
 - (finance.naver.com·m.stock.naver.com 은 WebFetch 차단될 수 있음)
 
 ### 4단계: config.json 작성
-`scripts/config_amotech.json` 을 템플릿으로 복사해 값만 교체. 필드:
+`scripts/config_amotech_ndr.json`(아모텍 실데이터)을 템플릿으로 복사해 값만 교체. 필드:
 - `meta`(firm/note_type/date), `reported_by`(name/role/email)
-- `cover`: name, code, sector, headline, `stock_data`[[라벨,값]…], `rel_return`, `tamban_meta`(탐방형식/일시/참석자/작성), `summary`(핵심문구는 `**...**`), `points`[[제목,설명]×3]
+- `cover`: name, code, sector, headline, `stock_data`[[라벨,값]…], `rel_return`, `summary`(핵심문구는 `**...**`), `points`[[제목,설명]×3]
 - `forecasts`: years[], rows[[항목,…년도값]], footnote (E열은 컨센서스 없으면 자체추정+주석)
 - `deepdive`: title, sections[{head, body(`**...**`)}], roadmap{title,header,widths,rows}, source
 - `qa`: [[질문, 답변]…]  ← NDR 실제 문답, 수치 포함
-- `compliance`: [면책…]
-- `output`: **파일명만 적으면 바탕화면에 저장**(절대경로도 가능, 생략 시 종목명 기반 자동)
+- `output`(선택): **파일명은 항상 `<종목명>_탐방노트.docx`로 통일** 저장. output을 절대경로(폴더/파일)로 주면 그 폴더에, 생략하면 바탕화면에 저장. (탐방개요·Compliance 면책 페이지는 제거됨)
 
 ### 5단계: docx 생성
 ```

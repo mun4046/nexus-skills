@@ -12,14 +12,18 @@ PDF 변환은 같은 폴더의 convert_to_pdf.py 사용(LibreOffice 또는 Windo
 import sys, json, io, os
 
 def resolve_output(cfg):
-    out = cfg.get("output") or (cfg["cover"]["name"] + " 탐방 보고서 (Nexus양식).docx")
-    out = os.path.expanduser(out)
-    if not os.path.isabs(out):
-        desktop = os.path.join(os.path.expanduser("~"), "Desktop")
-        if not os.path.isdir(desktop):
-            desktop = os.path.expanduser("~")
-        out = os.path.join(desktop, out)
-    return out
+    # 파일명은 항상 "<종목명>_탐방노트.docx" 로 통일한다.
+    fname = cfg["cover"]["name"] + "_탐방노트.docx"
+    out = cfg.get("output")
+    out = os.path.expanduser(out) if out else None
+    # output이 절대경로(폴더/파일)면 그 폴더에, 아니면 바탕화면에 통일 파일명으로 저장.
+    if out and os.path.isabs(out):
+        d = out if os.path.isdir(out) else os.path.dirname(out)
+        return os.path.join(d, fname)
+    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    if not os.path.isdir(desktop):
+        desktop = os.path.expanduser("~")
+    return os.path.join(desktop, fname)
 from docx import Document
 from docx.shared import Pt, RGBColor, Cm, Emu
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -183,21 +187,6 @@ def build(cfg):
     p=para(space_after=4,container=R); r=p.add_run(cov["sector"]); setf(r,size=8.5,color=GREY)
     p=para(space_after=6,container=R); r=p.add_run(cov["headline"]); setf(r,size=13,bold=True,color=BLACK)
 
-    # ▌탐방 개요
-    p=para(space_after=2,container=R); r=p.add_run("▌ 탐방 개요"); setf(r,size=10,bold=True,color=GOLD)
-    tm=cov["tamban_meta"]  # list of [label,value], rendered 2 per row
-    rows_n=(len(tm)+1)//2
-    ts=R.add_table(rows=rows_n,cols=4); thin_borders(ts); set_widths(ts,[2.2,4.2,2.0,4.2])
-    for i in range(rows_n):
-        a=tm[2*i]; set_cell(ts.rows[i].cells[0],a[0],size=8.5,bold=True,color=BODY,bg=BEIGE)
-        set_cell(ts.rows[i].cells[1],a[1],size=8.5,color=BODY,align=WD_ALIGN_PARAGRAPH.LEFT)
-        if 2*i+1<len(tm):
-            b=tm[2*i+1]; set_cell(ts.rows[i].cells[2],b[0],size=8.5,bold=True,color=BODY,bg=BEIGE)
-            set_cell(ts.rows[i].cells[3],b[1],size=8.5,color=BODY,align=WD_ALIGN_PARAGRAPH.LEFT)
-        else:
-            set_cell(ts.rows[i].cells[2],"",bg=BEIGE); set_cell(ts.rows[i].cells[3],"")
-    R.add_paragraph().paragraph_format.space_after=Pt(2)
-
     # ▌핵심 요약
     p=para(space_after=2,space_before=4,container=R); r=p.add_run("▌ 핵심 요약"); setf(r,size=10,bold=True,color=GOLD)
     rich_md(para(space_after=4,container=R,line=1.2),cov["summary"],size=9,color=BODY)
@@ -264,17 +253,6 @@ def build(cfg):
         pa=para(space_after=3,indent=0.55,line=1.2)
         r=pa.add_run("A.  "); setf(r,size=9.5,bold=True,color=BODY)
         r=pa.add_run(a); setf(r,size=9.5,color=BODY)
-
-    # ===== Compliance =====
-    DOC.add_page_break()
-    ct=DOC.add_table(rows=1,cols=1); thin_borders(ct,color=GOLD_HEX); cell=ct.rows[0].cells[0]; cell_bg(cell,GOLD_HEX); cell.text=""
-    pt=cell.paragraphs[0]; pt.paragraph_format.space_before=Pt(10); pt.paragraph_format.space_after=Pt(10)
-    r=pt.add_run("Compliance Notice"); setf(r,size=26,bold=True,color=WHITE)
-    for d in cfg["compliance"]:
-        pd=cell.add_paragraph(); pd.paragraph_format.space_after=Pt(6); pd.paragraph_format.left_indent=Cm(0.3)
-        r=pd.add_run("•  "); setf(r,size=9,color=WHITE); r=pd.add_run(d); setf(r,size=9,color=WHITE)
-    for _ in range(5):
-        pe=cell.add_paragraph(); pe.paragraph_format.space_after=Pt(6); pe.add_run(" ")
 
     out=resolve_output(cfg)
     os.makedirs(os.path.dirname(out), exist_ok=True)
